@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Users</title>
+	<h:outputStylesheet library="css" name="style.css"/>
+</h:head>
+<h:body>
+	<h:form>
+		<p:panel header="Users list">
+			<p:dataTable emptyMessage="No record Found."
+				paginator="true">
+				<f:facet name="header">
+					<p:commandButton value="New" oncomplete="PF('dialog').show();" />
+				</f:facet>
+
+				<p:column headerText="Name">
+				</p:column>
+
+				<p:column headerText="PPS">
+				</p:column>
+				
+				<p:column headerText="Type">
+				</p:column>
+				
+				<p:column headerText="Active">
+				</p:column>
+
+				<p:column headerText="Options">
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+
+	<p:dialog header="Register User" widgetVar="dialog"
+		draggable="false" resizable="false" modal="true" closable="false">
+		<h:form>
+			<h:panelGrid columns="2">
+				<p:outputLabel value="Person" />
+				<p:selectOneMenu filter="true">
+					<f:selectItem itemValue="" itemLabel="Select a person" />
+				</p:selectOneMenu>
+				
+				<p:outputLabel value="Password" />
+				<p:password maxlength="8" size="10" />
+				
+				<p:outputLabel value="Tipo:" />
+				<p:selectOneRadio>
+					<f:selectItem itemValue="A" itemLabel="Adminitrator" />
+					<f:selectItem itemValue="M" itemLabel="Manager" />
+					<f:selectItem itemValue="C" itemLabel="Cashier" />
+				</p:selectOneRadio>
+				
+				<p:outputLabel value="Active" />
+				<p:selectBooleanCheckbox />
+	
+			</h:panelGrid>
+
+			<h:panelGrid columns="2">
+				<p:commandButton value="Save" />
+				<p:commandButton value="Close" oncomplete="PF('dialog').hide();" />
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</h:body>
+</html>
