@@ -12,7 +12,9 @@
 <h:outputStylesheet library="css" name="style.css"/>
 </h:head>
 <h:body>
+	<p:growl id="message" life="2400"></p:growl>
 	<h:form>
+		
 		<p:panel header="List of states">
 			<p:dataTable emptyMessage="No records found" pagination="true">
 				<f:facet name="header">
@@ -35,7 +37,7 @@
 				<p:inputText maxlength="2" size="10"></p:inputText>
 			</h:panelGrid>
 			<h:panelGrid columns="2">
-				<p:commandButton value="Save" />
+				<p:commandButton value="Save" actionListener="#{stateBean.save()}" update=":message"/>
 				<p:commandButton value="Close" oncomplete="PF('dialog').hide();"/>
 			</h:panelGrid>
 		</h:form>
