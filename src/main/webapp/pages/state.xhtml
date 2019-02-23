@@ -13,31 +13,59 @@
 </h:head>
 <h:body>
 	<p:growl id="message" life="2400"></p:growl>
-	<h:form>
+	<h:form id="formList">
 		
-		<p:panel header="List of states">
-			<p:dataTable emptyMessage="No records found" pagination="true">
+		<p:panel header="List of states" id="table">
+			<p:dataTable value="#{stateBean.states}" var="state" emptyMessage="No records found" paginator="true" rows="6">
 				<f:facet name="header">
-					<p:commandButton value="New" oncomplete="PF('dialog').show();"></p:commandButton>
+					<p:commandButton value="New" actionListener="#{stateBean.New}" update=":formRegister:pnGrid" oncomplete="PF('dialog').show();"></p:commandButton>
 				</f:facet>
-				<p:column headerText="Name"></p:column>
-				<p:column headerText="Initial"></p:column>
-				<p:column headerText="Options"></p:column>
+				<p:column headerText="Name" sortBy="#{state.name}" filterBy="#{state.name}">
+					<h:outputText value="#{state.name}" />
+				</p:column>
+				<p:column headerText="Initial" sortBy="#{state.initial}" filterBy="#{state.initial}">
+					<h:outputText value="#{state.initial}" />
+				</p:column>
+				<p:column headerText="Options">
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{stateBean.toEdit}"
+					update=":formRegister:pnGrid" oncomplete="PF('dialog').show();">
+						<f:attribute name="selectedState" value="#{state}" />
+					</p:commandButton> 
+						
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{stateBean.remove}" update=":message :formList:table">
+						<p:confirm header="Confirmation" message="Confirm to delete this state?" icon="ui-icon-alert" />
+						<f:attribute name="selectedState" value="#{state}" />
+					</p:commandButton>
+				</p:column>				
 			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" 
+				icon="ui-icon-check"></p:commandButton>
+				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" 
+				icon="ui-icon-close"></p:commandButton>
+			</p:confirmDialog>
 		</p:panel>
 	</h:form>
 	
-	<p:dialog header="Register States" widgetVar = "dialog" draggable="false" resizable="false" modal="true" closable="false">
-		<h:form>
-			<h:panelGrid columns="2">
-				<p:outputLabel value="name"></p:outputLabel>
-				<p:inputText maxlength="50" size="30"></p:inputText>
+	<p:dialog header="Register States" widgetVar = "dialog" draggable="false" 
+	resizable="false" modal="true" closable="false" global="true">
+		<h:form id="formRegister">
+			<h:panelGrid columns="2" id="pnGrid">
+				<p:outputLabel value="Name"></p:outputLabel>
+				<p:inputText maxlength="50" 
+				size="30" value="#{stateBean.state.name}"
+				required="true" requiredMessage="Field Name is required"></p:inputText>
 				
 				<p:outputLabel value="Initial"></p:outputLabel>
-				<p:inputText maxlength="2" size="10"></p:inputText>
+				<p:inputText maxlength="2" size="10" 
+				value="#{stateBean.state.initial}" 
+				required="true" requiredMessage="Field Initial is required"></p:inputText>
 			</h:panelGrid>
 			<h:panelGrid columns="2">
-				<p:commandButton value="Save" actionListener="#{stateBean.save()}" update=":message"/>
+				<p:commandButton value="Save" actionListener="#{stateBean.save()}" 
+				update=":message :formRegister:pnGrid :formList:table" oncomplete="PF('dialog').hide();"/>
 				<p:commandButton value="Close" oncomplete="PF('dialog').hide();"/>
 			</h:panelGrid>
 		</h:form>
