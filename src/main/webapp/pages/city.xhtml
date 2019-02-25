@@ -9,42 +9,78 @@
 	<title>City</title>
 	<h:outputStylesheet library="css" name="style.css"/>
 </h:head>
+
 <h:body>
-	<h:form>
-		<p:panel header="Cities List">
-			<p:dataTable emptyMessage="No records found"
-				paginator="true">
+	<p:growl id="message" />
+
+	<h:form id="formList">
+		<p:panel header="List of Cities" id="table">
+			<p:dataTable emptyMessage="No records were found"
+				paginator="true" value="#{cityBean.cities}" var="city" rows="5">
 				<f:facet name="header">
-					<p:commandButton value="New" oncomplete="PF('dialog').show();" />
+					<p:commandButton value="New" actionListener="#{cityBean.New}"
+						oncomplete="PF('dialog').show();"
+						update=":message :formRegister:panel" >
+						<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
 				</f:facet>
 
-				<p:column headerText="Name">
+				<p:column headerText="Name" filterBy="#{city.name}"
+					sortBy="#{city.name}">
+					<h:outputText value="#{city.name}" />
 				</p:column>
 
-				<p:column headerText="State">
+				<p:column headerText="State" filterBy="#{city.state.name}"
+					sortBy="#{city.state.name}">
+					<h:outputText value="#{city.state.name}" />
+					<h:outputText value=" - " />
+					<h:outputText value="#{city.state.initial}" />
 				</p:column>
 
 				<p:column headerText="Options">
+					<p:commandButton icon="ui-icon-pencil" actionListener="#{cityBean.toEdit}"
+					update=":formRegister:panel" oncomplete="PF('dialog').show();">
+						<f:attribute name="selectedCity" value="#{city}" />
+						<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton> 
+						
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{cityBean.remove}" update=":message :formList:table">
+						<p:confirm header="Confirmation" message="Confirm to delete this city?" icon="ui-icon-alert" />
+						<f:attribute name="selectedCity" value="#{city}" />
+					</p:commandButton>
+
 				</p:column>
 			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" 
+				icon="ui-icon-check"></p:commandButton>
+				<p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" 
+				icon="ui-icon-close"></p:commandButton>
+			</p:confirmDialog>
 		</p:panel>
 	</h:form>
 
-	<p:dialog header="Register city" widgetVar="dialog"
+	<p:dialog header="Register Cities" widgetVar="dialog"  global="true"
 		draggable="false" resizable="false" modal="true" closable="false">
-		<h:form>
-			<h:panelGrid columns="2">
+		<h:form id="formRegister">
+			<h:panelGrid id="panel" columns="2">
 				<p:outputLabel value="Name:" />
-				<p:inputText maxlength="50" size="30" />
-				
+				<p:inputText maxlength="50" size="30"
+					value="#{cityBean.city.name}" required="true" requiredMessage="Field Name is required" />
+
 				<p:outputLabel value="State" />
-				<p:selectOneMenu filter="true">
-					<f:selectItem itemValue="" itemLabel="Select a state" />
+				<p:selectOneMenu filter="true" value="#{cityBean.city.state}" converter="omnifaces.SelectItemsConverter"
+				required="true" requiredMessage="Field State is required">
+					<f:selectItem noSelectionOption="true" itemLabel="Selecte a state" />
+					<f:selectItems value="#{cityBean.states}" var="state"
+						itemValue="#{state}" itemLabel="#{state.name} - #{state.initial}" />
 				</p:selectOneMenu>
 			</h:panelGrid>
 
 			<h:panelGrid columns="2">
-				<p:commandButton value="Save" />
+				<p:commandButton value="Save" actionListener="#{cityBean.save()}" 
+				update=":message :formRegister:panel :formList:table" />
 				<p:commandButton value="Close" oncomplete="PF('dialog').hide();" />
 			</h:panelGrid>
 		</h:form>

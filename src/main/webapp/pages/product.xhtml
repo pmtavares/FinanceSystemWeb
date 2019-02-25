@@ -10,36 +10,68 @@
 	<h:outputStylesheet library="css" name="style.css"/>
 </h:head>
 <h:body>
-	<h:form>
+	<p:growl id="message" />
+	<h:form id="listForm">
 		<p:panel header="Products List">
-			<p:dataTable emptyMessage="No records found"
-				paginator="true">
+			<p:dataTable emptyMessage="No records found" paginator="true" 
+			value="#{productBean.products}" var="product" rows="5">
 				<f:facet name="header">
-					<p:commandButton value="New" oncomplete="PF('dialog').show();" />
+					<p:commandButton value="New" oncomplete="PF('dialog').show();" 
+					actionListener="#{productBean.New}" update=":message :formRegister:panel">
+					<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
 				</f:facet>
 
 				<p:column headerText="Description">
+					<h:outputText value="#{product.description}" />
 				</p:column>
 
 				<p:column headerText="Quantity">
+					<h:outputText value="#{product.quantity}" />
 				</p:column>
 				
 				<p:column headerText="Value">
+					<h:outputText value="#{product.value}" >
+						<f:convertNumber locale="EN_US" minFractionDigits="2" />
+					</h:outputText>
 				</p:column>
 				
 				<p:column headerText="Supplier">
+					<h:outputText value="#{product.supplier.description}" />
 				</p:column>
 
 				<p:column headerText="Options">
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{productBean.Remove}"
+						update=":message :formList:table">
+						<p:confirm header="Confirmation"
+							message="Want to remove the product?" icon="ui-icon-alert" />
+						<f:attribute name="selectedProduct" value="#{product}" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{productBean.Edit}"
+						update=":message :formRegister:panel"
+						oncomplete="PF('dialog').show();">
+						<f:attribute name="selectedProduct" value="#{product}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
 				</p:column>
 			</p:dataTable>
+			
+			<p:confirmDialog global="true">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
 		</p:panel>
 	</h:form>
 
-	<p:dialog header="Register Product" widgetVar="dialog"
+	<p:dialog header="Register Product" widgetVar="dialog" global="true"
 		draggable="false" resizable="false" modal="true" closable="false">
-		<h:form>
-			<h:panelGrid columns="2">
+		<h:form id="formRegister">
+			<h:panelGrid columns="2" id="panel">
 				<p:outputLabel value="Description" />
 				<p:inputText maxlength="50" size="30" />
 				

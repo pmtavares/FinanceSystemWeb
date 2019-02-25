@@ -147,4 +147,39 @@ public class GenericDAO<Entity> {
 	}
 
 	
+
+	@Override
+	public String toString() {
+		return "GenericDAO [classe=" + classe + ", toList()=" + toList() + ", hashCode()=" + hashCode()
+				+ ", getClass()=" + getClass() + ", toString()=" + super.toString() + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((classe == null) ? 0 : classe.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GenericDAO other = (GenericDAO) obj;
+		if (classe == null) {
+			if (other.classe != null)
+				return false;
+		} else if (!classe.equals(other.classe))
+			return false;
+		return true;
+	}
+	
+	
+
+	
 }

@@ -91,12 +91,6 @@ public class StateBean implements Serializable {
 		try {
 			state = (State) event.getComponent().getAttributes().get("selectedState");
 
-			//StateDAO stateDAO = new StateDAO();
-			//stateDAO.delete(state);
-			
-			//states = stateDAO.toList();
-
-			//Messages.addGlobalInfo("Register removed");
 		} catch (RuntimeException erro) {
 			Messages.addFlashGlobalError("There was an error to edit");
 			erro.printStackTrace();
