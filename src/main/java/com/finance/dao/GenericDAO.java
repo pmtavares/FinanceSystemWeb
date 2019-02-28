@@ -59,7 +59,7 @@ public class GenericDAO<Entity> {
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<Entity> listar(String orderField) {
+	public List<Entity> list(String orderField) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		try {
 			Criteria query = session.createCriteria(classe);
@@ -146,7 +146,6 @@ public class GenericDAO<Entity> {
 		
 	}
 
-	
 
 	@Override
 	public String toString() {

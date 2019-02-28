@@ -12,7 +12,7 @@
 <h:body>
 	<p:growl id="message" />
 	<h:form id="listForm">
-		<p:panel header="Products List">
+		<p:panel header="Products List" id="table">
 			<p:dataTable emptyMessage="No records found" paginator="true" 
 			value="#{productBean.products}" var="product" rows="5">
 				<f:facet name="header">
@@ -43,13 +43,13 @@
 				<p:column headerText="Options">
 					<p:commandButton icon="ui-icon-trash"
 						actionListener="#{productBean.Remove}"
-						update=":message :formList:table">
+						update=":message :listForm:table">
 						<p:confirm header="Confirmation"
 							message="Want to remove the product?" icon="ui-icon-alert" />
 						<f:attribute name="selectedProduct" value="#{product}" />
 					</p:commandButton>
 					<p:commandButton icon="ui-icon-pencil"
-						actionListener="#{productBean.Edit}"
+						actionListener="#{productBean.toEdit}"
 						update=":message :formRegister:panel"
 						oncomplete="PF('dialog').show();">
 						<f:attribute name="selectedProduct" value="#{product}" />
@@ -73,23 +73,30 @@
 		<h:form id="formRegister">
 			<h:panelGrid columns="2" id="panel">
 				<p:outputLabel value="Description" />
-				<p:inputText maxlength="50" size="30" />
+				<p:inputText maxlength="50" size="30" value="#{productBean.product.description}"
+				required="true" requiredMessage="Field Description is required" />
 				
 				<p:outputLabel value="Quantity:" />
-				<p:inputText maxlength="5" size="10" />
+				<p:inputText maxlength="5" size="10" value="#{productBean.product.quantity}"
+				required="true" requiredMessage="Field quantity  is required" />
 				
 				<p:outputLabel value="Value:" />
-				<p:inputText maxlength="7" size="10" />	
+				<p:inputText maxlength="7" size="10" value="#{productBean.product.value}"
+				required="true" requiredMessage="Field value is required" />	
 				
 				<p:outputLabel value="Supplier" />
-				<p:selectOneMenu filter="true">
-					<f:selectItem itemValue="" itemLabel="Select a supplier" />
+				<p:selectOneMenu filter="true" value="#{productBean.product.supplier}" converter="omnifaces.SelectItemsConverter"
+				required="true" requiredMessage="Field supplier is required">
+					<f:selectItem noSelectionOption="true" itemLabel="Select a supplier" />
+					<f:selectItems value="#{productBean.supplier}" var="supplier"
+						itemValue="#{supplier}" itemLabel="#{supplier.description}" />
 				</p:selectOneMenu>
 				
 			</h:panelGrid>
 
 			<h:panelGrid columns="2">
-				<p:commandButton value="Save" />
+				<p:commandButton value="Save" actionListener="#{productBean.Save}" 
+				update=":message :formRegister:panel :listForm:table"/>
 				<p:commandButton value="Close" oncomplete="PF('dialog').hide();" />
 			</h:panelGrid>
 		</h:form>

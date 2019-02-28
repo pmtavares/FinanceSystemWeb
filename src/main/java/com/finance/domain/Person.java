@@ -43,8 +43,21 @@ public class Person extends GenericDomain{
 	@JoinColumn(nullable = false)
 	private City city;
 	
-
+	@ManyToOne
+	@JoinColumn(nullable = false)
+	private State state;
 	
+	
+	public State getState() {
+		return state;
+	}
+
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+
 	public City getCity() {
 		return city;
 	}

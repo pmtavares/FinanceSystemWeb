@@ -3,6 +3,8 @@ package com.finance.bean;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.event.ActionEvent;
 
 import org.omnifaces.util.Messages;
@@ -12,6 +14,8 @@ import com.finance.dao.SupplierDAO;
 import com.finance.domain.Product;
 import com.finance.domain.Supplier;
 
+@ManagedBean()
+@ViewScoped
 public class ProductBean {
 	
 	private Product  product;
