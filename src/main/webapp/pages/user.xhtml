@@ -1,70 +1,98 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
-<h:head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Users</title>
-	<h:outputStylesheet library="css" name="style.css"/>
-</h:head>
-<h:body>
-	<h:form>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui"
+template="/templates/template.xhtml"
+>
+
+<ui:define name="content">
+	<h:form id="formList">
 		<p:panel header="Users list">
-			<p:dataTable emptyMessage="No record Found."
-				paginator="true">
+			<p:dataTable id="table" emptyMessage="No record Found." 
+			paginator="true" value="#{usersBean.users}" var="userList" row="5">
 				<f:facet name="header">
-					<p:commandButton value="New" oncomplete="PF('dialog').show();" />
+					<p:commandButton value="New" oncomplete="PF('dialog').show();"
+					actionListener="#{usersBean.New}"
+						 update=":message :formRegister:panel">
+						<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
 				</f:facet>
 
 				<p:column headerText="Name">
+					<h:outputText value="#{userList.person.name}" />
 				</p:column>
-
+					
 				<p:column headerText="PPS">
+				<h:outputText value="#{userList.person.pps}" />
 				</p:column>
 				
 				<p:column headerText="Type">
+					<h:outputText value="#{userList.typeFormatted}" />
 				</p:column>
 				
 				<p:column headerText="Active">
+					<h:outputText value="#{userList.activeFormatted}" />
 				</p:column>
 
 				<p:column headerText="Options">
+				<p:commandButton icon="ui-icon-trash">
+						<p:confirm header="Confirmation"
+							message="Want to remove the user?" icon="ui-icon-alert" />
+					</p:commandButton>
+					<p:commandButton icon="ui-icon-pencil">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
 				</p:column>
 			</p:dataTable>
+			<p:confirmDialog global="true">
+				<p:commandButton value="Yes" type="button"
+					styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+				<p:commandButton value="No" type="button"
+					styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+			</p:confirmDialog>
 		</p:panel>
 	</h:form>
 
-	<p:dialog header="Register User" widgetVar="dialog"
-		draggable="false" resizable="false" modal="true" closable="false">
-		<h:form>
-			<h:panelGrid columns="2">
-				<p:outputLabel value="Person" />
-				<p:selectOneMenu filter="true">
-					<f:selectItem itemValue="" itemLabel="Select a person" />
+	<p:dialog header="Register User" widgetVar="dialog" 
+		draggable="false" resizable="false" global="true" closable="false">
+		<h:form id="formRegister">
+			<h:panelGrid columns="2" id="panel">
+				<p:outputLabel for="person" value="Person" />
+				<p:selectOneMenu  id="person" filter="true" value="#{usersBean.user.person}" required="true"
+								requiredMessage="Field Person is required"
+								converter="omnifaces.SelectItemsConverter">
+					<f:selectItem  noSelectionOption="true" itemLabel="Select a person"/>
+					<f:selectItems value="#{usersBean.persons}" var="person" itemValue="#{person}"
+									itemLabel="#{person.name} - #{person.pps}"/>
 				</p:selectOneMenu>
 				
-				<p:outputLabel value="Password" />
-				<p:password maxlength="8" size="10" />
+				<p:outputLabel for="password" value="Password" />
+				<p:password maxlength="8" size="10" id="password" value="#{usersBean.user.password}" required="true"
+							requiredMessage="Field password is required" 
+							validatorMessage="Inform your password from 6 to 8 chars"/>
 				
-				<p:outputLabel value="Tipo:" />
-				<p:selectOneRadio>
+				<p:outputLabel for="type" value="Tipo:" />
+				<p:selectOneRadio id="type" value="#{usersBean.user.type}" required="true" requiredMessage="Field type is required">
 					<f:selectItem itemValue="A" itemLabel="Adminitrator" />
 					<f:selectItem itemValue="M" itemLabel="Manager" />
 					<f:selectItem itemValue="C" itemLabel="Cashier" />
 				</p:selectOneRadio>
 				
-				<p:outputLabel value="Active" />
-				<p:selectBooleanCheckbox />
+				<p:outputLabel for="active" value="Active" />
+				<p:selectBooleanCheckbox id="active" value="#{usersBean.user.active}" required="true" requiredMessage="Field active is required" />
 	
 			</h:panelGrid>
 
 			<h:panelGrid columns="2">
-				<p:commandButton value="Save" />
+				<p:commandButton value="Save" update=":message :formRegister:panel :formList:table"
+				actionListener="#{usersBean.Save}" />
 				<p:commandButton value="Close" oncomplete="PF('dialog').hide();" />
 			</h:panelGrid>
 		</h:form>
 	</p:dialog>
-</h:body>
-</html>
+</ui:define>
+</ui:composition>

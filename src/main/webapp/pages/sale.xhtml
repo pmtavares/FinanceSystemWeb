@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui"
+template="/templates/template.xhtml"
+>
+
+<ui:define name="content">
+		<h:form id="form">
+		<p:panel header="Products">
+			<p:dataTable id="tableProduct"
+				emptyMessage="No records found." paginator="true"
+				value="#{salesBean.products}" var="product" rows="5"
+				paginatorPosition="bottom">
+
+				<p:column headerText="Description" filterBy="#{product.description}"
+					sortBy="#{product.description}">
+					<h:outputText value="#{product.description}" />
+				</p:column>
+
+				<p:column headerText="Quantity" sortBy="#{product.quantity}">
+					<h:outputText value="#{product.quantity}" />
+				</p:column>
+
+				<p:column headerText="Price" sortBy="#{product.value}">
+					<h:outputText value="#{product.value}">
+						<f:convertNumber minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Supplier"
+					filterBy="#{product.supplier.description}"
+					sortBy="#{product.supplier.description}">
+					<h:outputText value="#{product.supplier.description}" />
+				</p:column>
+
+				<p:column headerText="Options">
+					<p:commandButton icon="ui-icon-plus"
+						actionListener="#{salesBean.addProduct}"
+						update=":form:tableCart :form:panelFinal">
+						<f:attribute name="selectedProduct" value="#{product}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+
+		<p:panel header="Shopping Cart">
+			<p:dataTable id="tableCart"
+				emptyMessage="No records found." paginator="true"
+				value="#{salesBean.itensSale}" var="itemSale" rows="5"
+				paginatorPosition="bottom">
+
+				<p:column headerText="Description">
+					<h:outputText value="#{itemSale.product.description}" />
+				</p:column>
+
+				<p:column headerText="Value">
+					<h:outputText value="#{itemSale.product.value}">
+						<f:convertNumber minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Qnt">
+					<h:outputText value="#{itemSale.quantity}" />
+				</p:column>
+
+				<p:column headerText="Partial Value">
+					<h:outputText value="#{itemSale.partialPrice}">
+						<f:convertNumber minFractionDigits="2" />
+					</h:outputText>
+				</p:column>
+
+				<p:column headerText="Options">
+					<p:commandButton icon="ui-icon-minus"
+						actionListener="#{salesBean.Remove}"
+						update=":form:tableCart :form:panelFinal">
+						<f:attribute name="selectedItem" value="#{itemSale}" />
+					</p:commandButton>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+
+		<p:panel header="Conclude ">
+			<h:panelGrid id="panelFinal" columns="3">
+				<p:outputLabel value="Total: $" />
+				<h:outputText value="#{salesBean.sale.totalValue}">
+					<f:convertNumber  minFractionDigits="2" />
+				</h:outputText>
+				<p:commandButton value="Finish"
+					actionListener="#{salesBean.finalize}"
+					update=":message :formFinish:panelFinish"
+					oncomplete="PF('dialog').show();">
+					<f:actionListener
+						type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+				</p:commandButton>
+
+			</h:panelGrid>
+		</p:panel>
+	</h:form>
+	<p:dialog header="Finish Sale" widgetVar="dialog"
+		draggable="false" resizable="false" modal="true" closable="false">
+		<h:form id="formFinish">
+			<h:panelGrid id="panelFinish" columns="2">
+				<p:outputLabel value="Time " />
+				<h:outputText value="#{salesBean.sale.timeSale}">
+					<f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+				</h:outputText>
+
+				<p:outputLabel value="Total: $" />
+				<h:outputText value="#{salesBean.sale.totalValue}">
+					<f:convertNumber  minFractionDigits="2" />
+				</h:outputText>
+
+				<p:outputLabel for="staff" value="Staff" />
+				<p:selectOneMenu id="staff"
+					value="#{salesBean.sale.staff}"
+					converter="omnifaces.SelectItemsConverter" filter="true"
+					filterMatchMode="contains" required="true"
+					requiredMessage="Staff is required">
+					<f:selectItem noSelectionOption="true"
+						itemLabel="Select a staff" />
+					<f:selectItems value="#{salesBean.staffs}" var="staff"
+						itemValue="#{staff}"
+						itemLabel="#{staff.person.pps} - #{staff.person.name}" />
+				</p:selectOneMenu>
+
+				<p:outputLabel value="Client" />
+				<p:selectOneMenu value="#{salesBean.sale.client}"
+					converter="omnifaces.SelectItemsConverter" filter="true"
+					filterMatchMode="contains">
+					<f:selectItem noSelectionOption="true"
+						itemLabel="Select a client" />
+					<f:selectItems value="#{salesBean.clients}" var="client"
+						itemValue="#{client}"
+						itemLabel="#{client.person.pps} - #{client.person.name}" />
+				</p:selectOneMenu>
+
+			</h:panelGrid>
+
+			<h:panelGrid columns="2">
+				<p:commandButton value="Save" actionListener="#{salesBean.Save}"
+					update=":message :form:tableProduct :form:tableCart :form:panelFinal"
+					oncomplete="PF('dialog').hide();" />
+				<p:commandButton value="Close" oncomplete="PF('dialog').hide();" />
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+
+</ui:define>
+</ui:composition>

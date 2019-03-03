@@ -1,62 +1,90 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:h="http://xmlns.jcp.org/jsf/html"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:p="http://primefaces.org/ui">
-<h:head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	<title>Clients</title>
-	<h:outputStylesheet library="css" name="style.css"/>
-</h:head>
-<h:body>
-	<h:form>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+xmlns:ui="http://java.sun.com/jsf/facelets"
+xmlns:h="http://java.sun.com/jsf/html"
+xmlns:f="http://java.sun.com/jsf/core"
+xmlns:p="http://primefaces.org/ui"
+template="/templates/template.xhtml"
+>
+
+<ui:define name="content">
+	<h:form id="formList">
 		<p:panel header="Clients list">
-			<p:dataTable emptyMessage="No records found"
-				paginator="true">
+			<p:dataTable emptyMessage="No records found" id="table"
+				paginator="true" rows="5" value="#{clientBean.clients}" var="client">
 				<f:facet name="header">
-					<p:commandButton value="New" oncomplete="PF('dialog').show();" />
+					<p:commandButton value="New" oncomplete="PF('dialog').show();"
+					actionListener="#{clientBean.New}" update=":message :formRegister:panel">
+						<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
 				</f:facet>
 
-				<p:column headerText="Name">
+				<p:column headerText="Name" filterBy="#{client.person.name}"
+					sortBy="#{client.person.name}">
+					<h:outputText value="#{client.person.name}" />
 				</p:column>
 
-				<p:column headerText="PPS">
+				<p:column headerText="PPS" filterBy="#{client.person.pps}"
+					sortBy="#{client.person.pps}">
+					<h:outputText value="#{client.person.pps}" />
 				</p:column>
 				
-				<p:column headerText="Date Regitered">
+				<p:column headerText="Date Regitered" 
+				filterBy="#{client.dateRegister}" sortBy="#{client.dateRegister}">
+					<h:outputText value="#{client.dateRegister}">
+						<f:convertDateTime locale="en_US" />
+					</h:outputText>
 				</p:column>
 				
-				<p:column headerText="Active">
+				<p:column headerText="Active" sortBy="#{client.active}">
+					<p:selectBooleanCheckbox value="#{client.active}"
+						disabled="true" />
 				</p:column>
 
 				<p:column headerText="Options">
+					<p:commandButton icon="ui-icon-trash">
+						<p:confirm header="Confirmation" message="Do you want to remove this person?"
+							icon="ui-icon-alert" />
+						<f:attribute name="selectedPerson" value="#{person}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil">
+
+					</p:commandButton>
 				</p:column>
 			</p:dataTable>
 		</p:panel>
 	</h:form>
 
 	<p:dialog header="Register Client" widgetVar="dialog"
-		draggable="false" resizable="false" modal="true" closable="false">
-		<h:form>
-			<h:panelGrid columns="2">
-				<p:outputLabel value="Person:" />
-				<p:selectOneMenu filter="true">
-					<f:selectItem itemValue="" itemLabel="Select a person" />
+		draggable="false" resizable="false" global="true" closable="false">
+		<h:form id="formRegister">
+			<h:panelGrid columns="2" id="panel">
+				<p:outputLabel for="person" value="Person:" />
+				<p:selectOneMenu filter="true" id="person" value="#{clientBean.client.person}" required="true"
+					requiredMessage="Field person is required" converter="omnifaces.SelectItemsConverter" >
+					<f:selectItem noSelectionOption="true" itemLabel="Select a person" />
+					<f:selectItems value="#{clientBean.persons}" var="person"
+						itemValue="#{person}" itemLabel="#{person.name} - #{person.pps}" />
 				</p:selectOneMenu>
 				
-				<p:outputLabel value="Register Date:" />
-				<p:calendar />
+				<p:outputLabel for="dataRegister" value="Register Date:" />
+					<p:calendar id="dataRegister" value="#{clientBean.client.dateRegister}" required="true"
+					requiredMessage="The register data is required" size="10" />
 				
-				<p:outputLabel value="Active" />
-				<p:selectBooleanCheckbox />
+				<p:outputLabel for="active" value="Active" />
+				<p:selectBooleanCheckbox id="active"
+					value="#{clientBean.client.active}" required="true"
+					requiredMessage="Field active is required" />
 			</h:panelGrid>
 
 			<h:panelGrid columns="2">
-				<p:commandButton value="Save" />
+				<p:commandButton value="Save" update=":message :formRegister:panel :formList:table"
+					actionListener="#{clientBean.Save}" />
 				<p:commandButton value="Close" oncomplete="PF('dialog').hide();" />
 			</h:panelGrid>
 		</h:form>
 	</p:dialog>
-</h:body>
-</html>
+</ui:define>
+</ui:composition>

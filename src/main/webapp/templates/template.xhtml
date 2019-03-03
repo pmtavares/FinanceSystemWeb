@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+	
+<ui:insert name="metadata" />	
+<h:head>
+	<!-- Layout attributes will be got from https://www.primefaces.org/ -->
+	<h:outputStylesheet library="css" name="style.css" />
+	<!-- <h:outputScript library="js" name="scripts.js" /> -->
+
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>System Layout</title>
+</h:head>
+<h:body>
+	<p:growl id="message"/>
+	<p:layout fullPage="true">
+	
+		<p:layoutUnit position="west" size="200" resizable="false" closable="false" collapsible="false">
+			<h:form>
+				<p:panelMenu>
+					<p:submenu label="Files">
+						<p:menuitem value="Main" outcome="/pages/main.xhtml"/>
+						<p:menuitem value="Exit" />
+					</p:submenu>
+					<p:submenu label="Registrations">
+						<p:menuitem value="Products" outcome = "/pages/product.xhtml" />
+						<p:menuitem value="Suppliers" /> 
+						<p:menuitem value="Staffs" />
+						<p:menuitem value="State" outcome = "/pages/state.xhtml"/>
+						<p:menuitem value="City" outcome = "/pages/city.xhtml"/>
+						<p:menuitem value="Person" outcome = "/pages/person.xhtml"/>
+						<p:menuitem value="Client" outcome = "/pages/client.xhtml"/>
+						<p:menuitem value="Users" outcome = "/pages/user.xhtml"/>
+					</p:submenu>
+					<p:submenu label="Sales" >
+						<p:menuitem value="New Sale" outcome = "/pages/sale.xhtml"/>
+					</p:submenu>
+					<p:submenu label="Help">
+					
+					</p:submenu>
+				</p:panelMenu>
+			</h:form>
+		</p:layoutUnit>
+
+		<p:layoutUnit position="center" resizable="false" closable="false" collapsible="false" >
+			<ui:insert name="content"/>
+		</p:layoutUnit>
+		
+	</p:layout>
+
+</h:body>
+</html>
