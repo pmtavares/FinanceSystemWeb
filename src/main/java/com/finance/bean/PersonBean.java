@@ -11,9 +11,12 @@ import org.omnifaces.util.Messages;
 
 import com.finance.dao.CityDAO;
 import com.finance.dao.PersonDAO;
+import com.finance.dao.ProductDAO;
 import com.finance.dao.StateDAO;
+import com.finance.dao.SupplierDAO;
 import com.finance.domain.City;
 import com.finance.domain.Person;
+import com.finance.domain.Product;
 import com.finance.domain.State;
 
 @ManagedBean()
@@ -84,6 +87,18 @@ public class PersonBean {
 	}
 
 	public void toEdit(ActionEvent event) {
+		try {
+			person = (Person) event.getComponent().getAttributes().get("selectedPerson");
+			//PersonDAO personDAO = new PersonDAO();
+			StateDAO stateDAO = new StateDAO();
+			states = stateDAO.list("name");
+			cities = new ArrayList<City>();
+
+		} catch (RuntimeException erro) {
+			Messages.addFlashGlobalError("There was an error to edit");
+			erro.printStackTrace();
+		}	
+	
 
 	}
 
@@ -111,6 +126,19 @@ public class PersonBean {
 	}
 
 	public void Remove(ActionEvent event) {
+		try {
+			person = (Person) event.getComponent().getAttributes().get("selectedPerson");
+
+			PersonDAO personDAO = new PersonDAO();
+			personDAO.delete(person);
+
+			people = personDAO.toList();
+
+			Messages.addGlobalInfo("Person removed");
+		} catch (RuntimeException erro) {
+			Messages.addFlashGlobalError("There was an error to remove");
+			erro.printStackTrace();
+		}
 
 	}
 	
@@ -134,5 +162,7 @@ public class PersonBean {
 			error.printStackTrace();
 		}
 	}
+	
+	
 
 }

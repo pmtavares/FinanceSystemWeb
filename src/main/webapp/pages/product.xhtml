@@ -68,7 +68,7 @@ template="/templates/template.xhtml"
 
 	<p:dialog header="Register Product" widgetVar="dialog" global="true"
 		draggable="false" resizable="false" closable="false">
-		<h:form id="formRegister">
+		<h:form id="formRegister" enctype="multipart/form-data">
 			<h:panelGrid columns="2" id="panel">
 				<p:outputLabel value="Description" />
 				<p:inputText maxlength="50" size="30" value="#{productBean.product.description}"
@@ -89,6 +89,12 @@ template="/templates/template.xhtml"
 					<f:selectItems value="#{productBean.supplier}" var="supplier"
 						itemValue="#{supplier}" itemLabel="#{supplier.description}" />
 				</p:selectOneMenu>
+				<p:outputLabel value="Image:" for="photo" />
+				<p:fileUpload id="photo" mode="advanced" 
+				fileUploadListener="#{productBean.upload}" update=":message"
+				sizeLimit="100000">
+					
+				</p:fileUpload>
 				
 			</h:panelGrid>
 

@@ -1,13 +1,22 @@
 package com.finance.bean;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.omnifaces.util.Messages;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.UploadedFile;
 
 import com.finance.dao.ProductDAO;
 import com.finance.dao.SupplierDAO;
@@ -78,18 +87,22 @@ public class ProductBean {
 	
 	public void Save() {
 		try {
-			ProductDAO ProductDAO = new ProductDAO();
-			ProductDAO.Merge(product);
-
+			ProductDAO productDAO = new ProductDAO();
+			Product productResult = productDAO.Merge(product);
+			Path path = Paths.get(product.getPath());
+			Path pathDestiny = Paths.get("C:/Users/User/Documents/eclipse-workspace/"
+					+ "finance/src/main/webapp/resources/uploads/" + productResult.getCode() + ".jpg");
+			Files.copy(path, pathDestiny, StandardCopyOption.REPLACE_EXISTING);
+			
 			product = new Product();
 
 			SupplierDAO SupplierDAO = new SupplierDAO();
 			supplier = SupplierDAO.toList();
 
-			products = ProductDAO.toList();
+			products = productDAO.toList();
 
 			Messages.addGlobalInfo("Product Saved");
-		} catch (RuntimeException erro) {
+		} catch (RuntimeException | IOException erro) {
 			Messages.addFlashGlobalError("There was an error to save");
 			erro.printStackTrace();
 		}
@@ -111,6 +124,27 @@ public class ProductBean {
 		}
 	}
 	
+	public void handleFileUpload(FileUploadEvent event)
+	{
+		FacesMessage msg = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");
+        FacesContext.getCurrentInstance().addMessage(null, msg);
+	}
+	
+	public void upload(FileUploadEvent event)
+	{
+		UploadedFile fileUpload = event.getFile();
+		try {
+			Path fileTemp =  Files.createTempFile(null, null);
+			Files.copy(fileUpload.getInputstream(), fileTemp, StandardCopyOption.REPLACE_EXISTING);
+			product.setPath(fileTemp.toString());
+			Messages.addGlobalInfo("Image Saved");
+			System.out.println(product.getPath());
+			
+		} catch (IOException e) {
+			
+			e.printStackTrace();
+		}
+	}
 	
 
 }

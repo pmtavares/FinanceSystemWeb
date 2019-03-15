@@ -127,14 +127,16 @@ public class GenericDAO<Entity> {
 		}
 	}
 	
-	public void Merge(Entity entity) {
+	public Entity Merge(Entity entity) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction  transaction = null;  
 
 		try {
 			transaction = session.beginTransaction();
-			session.merge(entity);
+			@SuppressWarnings("unchecked")
+			Entity result = (Entity) session.merge(entity);
 			transaction.commit();
+			return result;
 		} catch (RuntimeException erro) {
 			if (transaction != null) {
 				transaction.rollback();

@@ -6,12 +6,16 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 @Entity
 public class Product extends GenericDomain{
 	
 	@Column(length = 80, nullable=false)
 	private String description;
+	
+	@Transient
+	private String path;
 	
 	@Column(nullable=false)
 	private Short quantity;
@@ -53,6 +57,14 @@ public class Product extends GenericDomain{
 
 	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 	
 	
