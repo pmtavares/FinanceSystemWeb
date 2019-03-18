@@ -76,7 +76,9 @@ public class ProductBean {
 	public void toEdit(ActionEvent event){
 		try {
 			product = (Product) event.getComponent().getAttributes().get("selectedProduct");
-
+			product.setPath("C:/Users/User/Documents/eclipse-workspace/"
+					+ "finance/src/main/webapp/resources/uploads/" + product.getCode() + ".jpg");
+			
 			SupplierDAO SupplierDAO = new SupplierDAO();
 			supplier = SupplierDAO.toList();
 		} catch (RuntimeException erro) {
@@ -89,10 +91,14 @@ public class ProductBean {
 		try {
 			ProductDAO productDAO = new ProductDAO();
 			Product productResult = productDAO.Merge(product);
-			Path path = Paths.get(product.getPath());
-			Path pathDestiny = Paths.get("C:/Users/User/Documents/eclipse-workspace/"
-					+ "finance/src/main/webapp/resources/uploads/" + productResult.getCode() + ".jpg");
-			Files.copy(path, pathDestiny, StandardCopyOption.REPLACE_EXISTING);
+			
+			if(product.getPath() != null)
+			{
+				Path path = Paths.get(product.getPath());
+				Path pathDestiny = Paths.get("C:/Users/User/Documents/eclipse-workspace/"
+						+ "finance/src/main/webapp/resources/uploads/" + productResult.getCode() + ".jpg");
+				Files.copy(path, pathDestiny, StandardCopyOption.REPLACE_EXISTING);
+			}			
 			
 			product = new Product();
 
@@ -116,14 +122,21 @@ public class ProductBean {
 			ProductDAO.delete(product);
 
 			products = ProductDAO.toList();
+			
+			//Remove picture from folder
+			Path pathPhoto = Paths.get("C:/Users/User/Documents/eclipse-workspace/"
+					+ "finance/src/main/webapp/resources/uploads/" + product.getCode() + ".jpg");			
+			Files.deleteIfExists(pathPhoto);
+			
 
 			Messages.addGlobalInfo("Product removed");
-		} catch (RuntimeException erro) {
+		} catch (RuntimeException | IOException erro) {
 			Messages.addFlashGlobalError("There was an error to remove");
 			erro.printStackTrace();
 		}
 	}
 	
+	//Test
 	public void handleFileUpload(FileUploadEvent event)
 	{
 		FacesMessage msg = new FacesMessage("Succesful", event.getFile().getFileName() + " is uploaded.");
