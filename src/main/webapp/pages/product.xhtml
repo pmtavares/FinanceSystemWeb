@@ -67,7 +67,7 @@ template="/templates/template.xhtml"
 	</h:form>
 
 	<p:dialog header="Register Product" widgetVar="dialog" global="true"
-		draggable="false" resizable="false" closable="false">
+		draggable="true" resizable="false" closable="false">
 		<h:form id="formRegister" enctype="multipart/form-data">
 			<h:panelGrid columns="2" id="panel">
 				<p:outputLabel value="Description" />
@@ -89,12 +89,17 @@ template="/templates/template.xhtml"
 					<f:selectItems value="#{productBean.supplier}" var="supplier"
 						itemValue="#{supplier}" itemLabel="#{supplier.description}" />
 				</p:selectOneMenu>
-				<p:outputLabel value="Image:" for="photo" />
-				<p:fileUpload id="photo" mode="advanced" 
-				fileUploadListener="#{productBean.upload}" update=":message"
+				<p:outputLabel value="Image:" for="upload" />
+				<p:fileUpload id="upload" mode="advanced" 
+				fileUploadListener="#{productBean.upload}" update=":message :formRegister:photo"
 				sizeLimit="100000">
 					
 				</p:fileUpload>
+				
+				<p:outputLabel value="Photo" for="photo" />
+				<p:graphicImage id="photo" value="#{imageBean.photo}">
+					<f:param name="path" value="#{productBean.product.path}"> </f:param>
+				</p:graphicImage>
 				
 			</h:panelGrid>
 
